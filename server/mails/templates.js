@@ -1,0 +1,357 @@
+const SEND_VERIFY_EMAIL = `<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vérification de votre adresse email</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f2f4f8;
+        font-family: "Poppins", sans-serif;
+        color: #333;
+        font-size: 0.9rem;
+      }
+      .email-wrapper {
+        max-width: 600px;
+        margin: 40px auto;
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      }
+      .email-header {
+        background-color: #222222;
+        color: #ffffff;
+        padding: 24px 32px;
+        text-align: center;
+      }
+      .email-header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .email-body {
+        padding: 32px;
+      }
+      .email-body h2 {
+        font-size: 20px;
+        margin-top: 0;
+      }
+      .verification-code {
+        margin: 24px auto;
+        padding: 16px 32px;
+        font-size: 32px;
+        font-weight: bold;
+        color: #0c0c0c;
+        background-color: #cfcfcf;
+        border-radius: 8px;
+        display: inline-block;
+        letter-spacing: 4px;
+      }
+      .email-footer {
+        font-size: 12px;
+        color: #888;
+        text-align: center;
+        padding: 16px;
+        background-color: #fafafa;
+      }
+      @media (max-width: 600px) {
+        .email-body {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-wrapper">
+      <div class="email-header">
+        <h1>Vérifiez votre adresse e-mail</h1>
+      </div>
+      <div class="email-body">
+        <h2>Bonjour, <strong>{{name}}</strong></h2>
+        <p>
+          Merci de vous être inscrit. Voici votre code de vérification à 6
+          chiffres :
+        </p>
+        <div class="verification-code">{{code}}</div>
+        <p>Ce code expirera dans <strong>10 minutes</strong>.</p>
+        <p>
+          Si vous n’êtes pas à l’origine de cette demande, vous pouvez ignorer
+          ce message.
+        </p>
+      </div>
+      <div class="email-footer">
+        &copy; 2025 Ton Application. Tous droits réservés.
+      </div>
+    </div>
+  </body>
+</html>
+`;
+
+const DEMANDE_DE_CODE = `<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vérification de votre adresse email</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f2f4f8;
+        font-family: "Poppins", sans-serif;
+        color: #333;
+        font-size: 0.9rem;
+      }
+      .email-wrapper {
+        max-width: 600px;
+        margin: 40px auto;
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      }
+      .email-header {
+        background-color: #222222;
+        color: #ffffff;
+        padding: 24px 32px;
+        text-align: center;
+      }
+      .email-header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .email-body {
+        padding: 32px;
+      }
+      .email-body h2 {
+        font-size: 20px;
+        margin-top: 0;
+      }
+      .verification-code {
+        margin: 24px auto;
+        padding: 16px 32px;
+        font-size: 32px;
+        font-weight: bold;
+        color: #0c0c0c;
+        background-color: #cfcfcf;
+        border-radius: 8px;
+        display: inline-block;
+        letter-spacing: 4px;
+      }
+      .email-footer {
+        font-size: 12px;
+        color: #888;
+        text-align: center;
+        padding: 16px;
+        background-color: #fafafa;
+      }
+      @media (max-width: 600px) {
+        .email-body {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-wrapper">
+      <div class="email-header">
+        <h1>Demande du code de verification</h1>
+      </div>
+      <div class="email-body">
+        <h2>Bonjour, <strong>{{name}}</strong></h2>
+        <p>
+          Vous avaez demander un nouveau code de verification. Voici le code a 6
+          chiffres :
+        </p>
+        <div class="verification-code">{{code}}</div>
+        <p>Ce code expirera dans <strong>10 minutes</strong>.</p>
+        <p>
+          Si vous n’êtes pas à l’origine de cette demande, vous pouvez ignorer
+          ce message.
+        </p>
+      </div>
+      <div class="email-footer">&copy; SODEC. Tous droits réservés.</div>
+    </div>
+  </body>
+</html>
+`;
+
+const RESET_PASSWORD = `<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vérification de votre adresse email</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f2f4f8;
+        font-family: "Poppins", sans-serif;
+        color: #333;
+        font-size: 0.9rem;
+        text-decoration: none;
+      }
+      .email-wrapper {
+        max-width: 600px;
+        margin: 40px auto;
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      }
+      .email-header {
+        background-color: #222222;
+        color: #ffffff;
+        padding: 24px 32px;
+        text-align: center;
+      }
+      .email-header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .email-body {
+        padding: 32px;
+      }
+      .email-body h2 {
+        font-size: 20px;
+        margin-top: 0;
+      }
+      .verification-code {
+        margin: 24px auto;
+        padding: 16px 32px;
+        font-size: 32px;
+        font-weight: bold;
+        color: #0c0c0c;
+        background-color: #cfcfcf;
+        border-radius: 8px;
+        display: inline-block;
+        letter-spacing: 4px;
+        text-decoration: none;
+      }
+      .email-footer {
+        font-size: 12px;
+        color: #888;
+        text-align: center;
+        padding: 16px;
+        background-color: #fafafa;
+      }
+      @media (max-width: 600px) {
+        .email-body {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-wrapper">
+      <div class="email-header">
+        <h1>Modifier votre mot de passe</h1>
+      </div>
+      <div class="email-body">
+        <h2>Bonjour, <strong>{{name}}</strong></h2>
+        <p>
+          Vous avaez demander a renouveller votre mot de passe voici le lien de
+          reunitialisation :
+        </p>
+        <a class="verification-code" href="{{resetUrl}}">Modifier</a>
+        <p>Ce lien expirera dans <strong>10 minutes</strong>.</p>
+        <p>
+          Si vous n’êtes pas à l’origine de cette demande, vous pouvez ignorer
+          ce message.
+        </p>
+      </div>
+      <div class="email-footer">&copy; SODEC. Tous droits réservés.</div>
+    </div>
+  </body>
+</html>
+`;
+
+const APPROVED_LEAVE = `<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vérification de votre adresse email</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f2f4f8;
+        font-family: "Poppins", sans-serif;
+        color: #333;
+        font-size: 0.9rem;
+        text-decoration: none;
+      }
+      .email-wrapper {
+        max-width: 600px;
+        margin: 40px auto;
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      }
+      .email-header {
+        background-color: #222222;
+        color: #ffffff;
+        padding: 24px 32px;
+        text-align: center;
+      }
+      .email-header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .email-body {
+        padding: 32px;
+      }
+      .email-body h2 {
+        font-size: 20px;
+        margin-top: 0;
+      }
+      .verification-code {
+        margin: 24px auto;
+        padding: 16px 32px;
+        font-size: 32px;
+        font-weight: bold;
+        color: #0c0c0c;
+        background-color: #cfcfcf;
+        border-radius: 8px;
+        display: inline-block;
+        letter-spacing: 4px;
+        text-decoration: none;
+      }
+      .email-footer {
+        font-size: 12px;
+        color: #888;
+        text-align: center;
+        padding: 16px;
+        background-color: #fafafa;
+      }
+      @media (max-width: 600px) {
+        .email-body {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-wrapper">
+      <div class="email-header">
+        <h1>Congé Apprové</h1>
+      </div>
+      <div class="email-body">
+        <h2>Bonjour, <strong>{{name}}</strong></h2>
+        <p>
+          Vous avaez demander demande de Congé à été Apprové votre commence le
+          {{start}} et prendra fin le {{end}}
+        </p>
+      </div>
+      <div class="email-footer">&copy; SODEC. Tous droits réservés.</div>
+    </div>
+  </body>
+</html>
+`
+
+module.exports = { SEND_VERIFY_EMAIL, DEMANDE_DE_CODE, RESET_PASSWORD, APPROVED_LEAVE };
