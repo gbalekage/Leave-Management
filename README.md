@@ -56,7 +56,7 @@ npm install
 
 ### example of .env (backend)
 PORT=5000
-DATABASE_URL=mongodb://localhost:27017/leavesystem
+DATABASE_URL= "postgresql://neondb_owner:npg_kYNoFVUv41nr@ep--a2wobffb-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 JWT_SECRET=your_jwt_secret
 EMAIL_USER=your_email@example.com
 EMAIL_PASS=your_email_password
