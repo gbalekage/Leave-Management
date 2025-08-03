@@ -12,8 +12,7 @@ A modern, full-featured web application for managing employee leave requests, ap
 - 📆 Calendar view of team absences
 - 📧 Email notifications for status updates
 - 📊 Admin dashboard with summary statistics
-- 🌐 REST API with full CRUD support
-- 📱 Mobile-friendly and responsive UI
+- 🌐 REST API with full CRUD 
 
 ---
 
@@ -21,7 +20,7 @@ A modern, full-featured web application for managing employee leave requests, ap
 
 | Layer    | Technology                                  |
 | -------- | ------------------------------------------- |
-| Frontend | Next.js + React + TypeScript + Tailwind CSS |
+| Frontend | Vite + React + TypeScript + Tailwind CSS |
 | Backend  | Node.js + Express.js                        |
 | Database | PostgreSQL NEON                             |
 | Auth     | JWT                                         |
