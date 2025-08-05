@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                   String
+  email                  String         @unique
+  matricule              String         @unique
+  password               String
+  verificationCode       String?
+  verificationExpiration DateTime?
+  resetToken             String?
+  resetTokenExpiration   DateTime?
+  isVerified             Boolean        @default(false)
+  lastLogin              DateTime       @default(now())
+  role                   Role           @default(EMPLOYEE)
+  leaves                 Leave[]        @relation("UserLeaves")
+  balances               LeaveBalance[]
+  reviews                Leave[]        @relation("Reviewer")
+  createdAt              DateTime       @default(now())
+  LeaveHistory           LeaveHistory[]
+}
+
+model Leave {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String         @db.Uuid
+  user        User           @relation("UserLeaves", fields: [userId], references: [id])
+  type        LeaveType
+  startDate   DateTime
+  endDate     DateTime
+  duration    Int // En jours
+  reason      String
+  status      LeaveStatus    @default(PENDING)
+  reviewedBy  String?        @db.Uuid
+  reviewer    User?          @relation("Reviewer", fields: [reviewedBy], references: [id])
+  comment     String? // Pour commentaire de refus ou de justification
+  documentUrl String? // Lien vers justificatif médical par exemple
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  history     LeaveHistory[]
+}
+
+model LeaveBalance {
+  id     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId String    @db.Uuid
+  user   User      @relation(fields: [userId], references: [id])
+  type   LeaveType
+  year   Int // Année concernée (utile pour calculs annuels)
+  total  Int
+  used   Int       @default(0)
+}
+
+model LeaveHistory {
+  id        String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leaveId   String        @db.Uuid
+  leave     Leave         @relation(fields: [leaveId], references: [id])
+  action    HistoryAction
+  byUserId  String        @db.Uuid
+  byUser    User          @relation(fields: [byUserId], references: [id])
+  createdAt DateTime      @default(now())
+  note      String? // Note ou raison liée à l'action
+}
+
+enum LeaveType {
+  ANNUAL
+  SICK
+  MATERNITY
+  PATERNITY
+  UNPAID
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum HistoryAction {
+  CREATED
+  UPDATED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}

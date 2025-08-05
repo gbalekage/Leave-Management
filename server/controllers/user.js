@@ -391,29 +391,72 @@ const getAllUsers = async (req, res, next) => {
 };
 
 const deleteUser = async (req, res, next) => {
-    try {
-        const {id} = req.params;
-        const user = await prisma.user.findUnique({where: {id: parseInt(id)}});
+  try {
+    const { id } = req.params;
+    console.log("User id:", id);
 
-        if (!user) {
-            return next(new HttpError("Utilisateur non trouvé", 404));
-        }
-
-        await prisma.user.delete({
-            where: {id: parseInt(id)},
-        });
-
-        res.status(200).json({message: "Utilisateur supprimé avec succès."});
-    } catch (error) {
-        console.error("Erreur lors de la suppression de l'utilisateur :", error);
-        next(
-            new HttpError(
-                "Erreur serveur lors de la suppression de l'utilisateur",
-                500
-            )
-        );
+    if (!id) {
+      return next(new HttpError("ID utilisateur manquant", 400));
     }
+
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      return next(new HttpError("Utilisateur non trouvé", 404));
+    }
+
+    // Step 1: Delete LeaveHistory records where the user is actor (byUserId) or related via leave
+    const userLeaves = await prisma.leave.findMany({
+      where: { userId: id },
+      select: { id: true },
+    });
+
+    const leaveIds = userLeaves.map((leave) => leave.id);
+
+    await prisma.leaveHistory.deleteMany({
+      where: {
+        OR: [
+          { byUserId: id },
+          { leaveId: { in: leaveIds } }
+        ],
+      },
+    });
+
+    // Step 2: Delete Leave records of the user
+    await prisma.leave.deleteMany({
+      where: {
+        OR: [
+          { userId: id },
+          { reviewedBy: id },
+        ],
+      },
+    });
+
+    // Step 3: Delete LeaveBalance records
+    await prisma.leaveBalance.deleteMany({
+      where: { userId: id },
+    });
+
+    // Step 4: Delete the user
+    await prisma.user.delete({
+      where: { id },
+    });
+
+    res.status(200).json({ message: "Utilisateur et ses données associées supprimés avec succès." });
+  } catch (error) {
+    console.error("Erreur lors de la suppression de l'utilisateur :", error);
+    next(
+      new HttpError(
+        "Erreur serveur lors de la suppression de l'utilisateur",
+        500
+      )
+    );
+  }
 };
+
+
 
 module.exports = {
     createUser,

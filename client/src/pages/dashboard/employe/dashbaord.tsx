@@ -94,13 +94,36 @@ const EmployeeDashboard = () => {
     { name: "Refusées", value: summary.rejected },
   ];
 
+  const calculateDuration = (start: string, end: string) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return "";
+
+    const timeDiff = endDate.getTime() - startDate.getTime();
+    const dayCount = Math.floor(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+
+    return dayCount > 0 ? dayCount.toString() : "";
+  };
+
   const handleChange =
     (field: string) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setForm((prev) => ({
-        ...prev,
-        [field]: e.target.value,
-      }));
+      const value = e.target.value;
+
+      setForm((prev) => {
+        const updatedForm = { ...prev, [field]: value };
+
+        if (field === "startDate" || field === "endDate") {
+          const duration = calculateDuration(
+            field === "startDate" ? value : prev.startDate,
+            field === "endDate" ? value : prev.endDate
+          );
+          updatedForm.duration = duration;
+        }
+
+        return updatedForm;
+      });
     };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -323,6 +346,8 @@ const EmployeeDashboard = () => {
                     onChange={handleChange("duration")}
                     className="mt-2"
                     min={1}
+                    readOnly
+                    disabled
                   />
                 </div>
 
