@@ -5,6 +5,8 @@ require("dotenv").config();
 const userRoutes = require("./routes/user");
 const leavesRoutes = require("./routes/leave");
 const statsRoutes = require("./routes/stats");
+const cron = require("node-cron");
+const { checkLeavesEndingToday } = require("./controllers/leave");
 
 const port = process.env.PORT || 3001;
 const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
@@ -28,4 +30,8 @@ app.use(errorHandler);
 // run the server
 app.listen(port, () => {
   console.log(`Le serveur est en ligne sur http://localhost:${port}`);
+  cron.schedule("0 7 * * *", async () => {
+  console.log("Running daily leave check at 7:00 AM...")
+  await checkLeavesEndingToday()
+})
 });

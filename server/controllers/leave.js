@@ -1,8 +1,11 @@
 const { PrismaClient } = require("../generated/prisma");
+const { subDays, startOfDay, endOfDay } = require("date-fns");
 const {
   sendMessagetoUser,
   sendRejectedLeaveToUser,
   sendLeaveToAdmins,
+  sendAminLeaveExpires,
+  sendUserLeaveExpires,
 } = require("../mails/sendMail");
 const HttpError = require("../models/error");
 
@@ -394,6 +397,46 @@ const rejectLeave = async (req, res, next) => {
   }
 };
 
+const checkLeavesEndingToday = async () => {
+  const todayStart = startOfDay(new Date());
+  const todayEnd = endOfDay(new Date());
+
+  const endingLeaves = await prisma.leave.findMany({
+    where: {
+      endDate: {
+        gte: todayStart,
+        lte: todayEnd,
+      },
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  if (endingLeaves.length === 0) return;
+
+  const admins = await prisma.user.findMany({
+    where: { role: "ADMIN" },
+  });
+
+  for (const leave of endingLeaves) {
+    const { user } = leave;
+
+    // Email to the user
+    await sendUserLeaveExpires(user.name, user.email, leave.endDate);
+
+    // Email to each admin
+    for (const admin of admins) {
+      await sendAminLeaveExpires(
+        admin.email,
+        admin.name,
+        user.name,
+        leave.endDate
+      );
+    }
+  }
+};
+
 module.exports = {
   createLeave,
   getAllLeaves,
@@ -405,4 +448,5 @@ module.exports = {
   acceptLeave,
   rejectLeave,
   updateLeave,
+  checkLeavesEndingToday,
 };

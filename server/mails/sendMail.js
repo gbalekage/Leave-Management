@@ -21,6 +21,44 @@ const sendVerificationcode = async (email, code, name) => {
   }
 };
 
+const sendAminLeaveExpires = async (
+  adminName,
+  userName,
+  mat,
+  endDate,
+  email
+) => {
+  const htmlContent = `<p>Bonjour ${adminName},</p>
+        <p>Le congé de <strong>${userName}</strong> (matricule ${mat}) se termine aujourd'hui (${endDate.toDateString()}).</p>
+        <p>Merci de vous assurer de sa reprise de travail demain.</p>`;
+
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Fin de conge",
+      html: htmlContent,
+    }),
+      console.log(`End leave email sent to ${email}`);
+  } catch (error) {}
+};
+
+const sendUserLeaveExpires = async (userName, endDate, email) => {
+  const htmlContent = `<p>Bonjour ${userName},</p>
+      <p>Votre congé se termine aujourd'hui (${endDate.toDateString()}). Merci de reprendre le travail dès demain.</p>
+      <p>Cordialement,</p>`;
+
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Fin de conge",
+      html: htmlContent,
+    }),
+      console.log(`End leave email sent to ${email} `);
+  } catch (error) {}
+};
+
 const sendDemandCode = async (email, code, name) => {
   const htmlContent = `
     <h3>Code de connexion</h3>
@@ -164,4 +202,6 @@ module.exports = {
   sendLeaveToAdmins,
   sendMessagetoUser,
   sendRejectedLeaveToUser,
+  sendAminLeaveExpires,
+  sendUserLeaveExpires,
 };
