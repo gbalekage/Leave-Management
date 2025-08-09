@@ -136,11 +136,13 @@ const UsersList = () => {
     }
   };
 
-  const filteredUsers = users.filter((u) =>
-    `${u.name} ${u.email} ${u.matricule} ${u.role}`
-      .toLowerCase()
-      .includes(search.toLowerCase())
-  );
+  const filteredUsers = users
+    .filter((u) => u.id !== user?.id) // Exclude logged-in user
+    .filter((u) =>
+      `${u.name} ${u.email} ${u.matricule} ${u.role}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
 
   return (
     <AdminLayout>

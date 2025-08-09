@@ -437,6 +437,31 @@ const checkLeavesEndingToday = async () => {
   }
 };
 
+const leavesByStatus = async (req, res, next) => {
+  try {
+    const leaves = await prisma.leave.findMany({
+      where: {
+        status: "APPROVED",
+      },
+      include: {
+        user: {
+          select: { name: true },
+        },
+        reviewer: {
+          select: { name: true },
+        },
+      },
+      orderBy: {
+        startDate: "desc",
+      },
+    });
+
+    res.json({ leaves });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createLeave,
   getAllLeaves,
@@ -449,4 +474,5 @@ module.exports = {
   rejectLeave,
   updateLeave,
   checkLeavesEndingToday,
+  leavesByStatus
 };

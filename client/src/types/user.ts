@@ -20,6 +20,10 @@ export type Leave = {
     role: string;
     email: string;
   };
+  reviewer?: {
+    id: string;
+    name: string;
+  };
   createdAt?: string;
   updatedAt?: string;
 };
